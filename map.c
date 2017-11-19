@@ -5,7 +5,7 @@
 
 typedef struct no {
   int chave;
-  char valor[20];
+  char valor[50];
   struct no *esq;
   struct no *dir;
 }NO;
@@ -64,14 +64,15 @@ void insereElemento(MAP *raiz, int chave, char valor[]) {
 }
 
 int retornaElemento(MAP *raiz, int chave, char *resultado) {
+  int comparacoes = 0;
   if(raiz == NULL){
     perror("O mapa nao existe!\n");
-    return 0;
+    return comparacoes;
   }
   else {
     if((*raiz) == NULL) {
       perror("O mapa nao contem nenhum elemento!\n");
-      return 0;
+      return comparacoes;
     }
     else {
       NO *aux = *raiz;
@@ -82,6 +83,7 @@ int retornaElemento(MAP *raiz, int chave, char *resultado) {
         if(chave > aux->chave) {
           aux = aux->dir;
         }
+        comparacoes++;
       }
       if(!aux) {
         printf("O elemento de chave %d nao foi encontrado!\n", chave);
@@ -90,7 +92,7 @@ int retornaElemento(MAP *raiz, int chave, char *resultado) {
         strcpy(resultado, aux->valor);
       }
     }
-    return 1;
+    return comparacoes;
   }
 }
 

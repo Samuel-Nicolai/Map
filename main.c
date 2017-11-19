@@ -3,30 +3,76 @@
 #include <string.h>
 #include "map.h"
 
+#define t 50
+
+void preencheMap(char nomeArquivo[], MAP *raiz) {
+  FILE *arquivo;
+  int key;
+  char value[t];
+
+  arquivo = fopen(nomeArquivo, "r");
+  if(!arquivo){
+    perror("Nao foi possivel ler o arquivo!\n");
+    return;
+  }
+  else {
+    while (fscanf(arquivo, "%d  %s", &key, value) != EOF) {
+      insereElemento(raiz, key, value);
+    }
+  }
+  fclose(arquivo);
+  return;
+}
+
 int main(int argc, char const *argv[]) {
   MAP *raiz;
-  int i, chave;
-  char nome[20], retorno[20];
+  char nomeArquivo[t], retorno[t];
+  int continuar = 1, ch, comp;
 
   raiz = criaMapa();
   if(!raiz) // Se matriz não foi alocada corretamente encerra o programa
     return 1;
 
-  for (i = 0; i < 3; i++) {
-    printf("Digite a chave e nome:\n");
-    scanf("%d", &chave);
-    scanf("%s", nome);
-    insereElemento(raiz, chave, nome);
-  }
+  printf("Digite o nome do arquivo de dados: ");
+  scanf("%s", nomeArquivo);
+  preencheMap(nomeArquivo, raiz);
+  printf("Preenchendo mapa ...\n");
 
-  if(retornaElemento(raiz, 5, retorno))
-    printf("retorno = %s\n", retorno);
-  else
-    printf("Nao encontrado!\n");
+  do {
+    printf("Escolha uma opcao:\n");
+    printf("1. Buscar elemento\n");
+    printf("2. Remover elemento\n");
+    printf("3. Imprimir mapa\n");
+    printf("0. Sair\n");
 
-  emOrdem(raiz);
-  removeElemento(raiz, 5);
-  emOrdem(raiz);
+    scanf("%d", &continuar);
+    system("cls || clear");
+
+    switch(continuar) {
+      case 1:
+        printf("Digite a chave para a busca: ");
+        scanf("%d", &ch);
+        system("cls || clear");
+        comp = retornaElemento(raiz, ch, retorno);
+        if(comp) {
+          printf("Foram realizadas %d comparacoes na busca.\nChave: %d, Valor: %s\n", comp, ch, retorno);
+        }
+        break;
+      case 2:
+        printf("Digite a chave do elemento a excluir: ");
+        scanf("%d", &ch);
+        removeElemento(raiz, ch);
+        break;
+      case 3:
+        printf("Imprimindo mapa em ordem:\n");
+        emOrdem(raiz);
+        break;
+      case 0:
+        continue;
+      default:
+        printf("Digite uma opcao valida!\n");
+    }
+  } while(continuar);
 
   return 0;
 }
