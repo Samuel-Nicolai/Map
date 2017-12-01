@@ -7,6 +7,6 @@ typedef struct no *MAP; // Estrtura do tipo MAP e um ponteiro para um no
 MAP* criaMapa (); // Retorna um ponteiro para um mapa
 void insereElemento(MAP *raiz, int chave, char valor[]);
 int retornaElemento(MAP *raiz, int chave, char *resultado);
-struct no *removeAtual(struct no *atual) ;
-void removeElemento(MAP *raiz, int chave);
+struct no *removeAtual(struct no *atual);
+int removeElemento(MAP *raiz, int chave);
 void emOrdem(MAP *raiz);

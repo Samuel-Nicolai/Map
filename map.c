@@ -64,97 +64,72 @@ void insereElemento(MAP *raiz, int chave, char valor[]) {
 }
 
 int retornaElemento(MAP *raiz, int chave, char *resultado) {
-  int comparacoes = 0;
-  if(raiz == NULL){
-    perror("O mapa nao existe!\n");
-    return comparacoes;
-  }
-  else {
-    if((*raiz) == NULL) {
-      perror("O mapa nao contem nenhum elemento!\n");
-      return comparacoes;
+  int cont = 0;
+  if (raiz == NULL)
+    return cont;
+  NO *aux = *raiz;
+  while (aux != NULL) {
+    cont++;
+    if (chave == aux->chave) {
+      strcpy(resultado, aux->valor);
+      return cont;
+    }
+    if (chave > aux->chave) {
+      aux = aux->dir;
     }
     else {
-      NO *aux = *raiz;
-      while(aux->chave != chave && aux) {
-        if(chave < aux->chave) {
-          aux = aux->esq;
-        }
-        if(chave > aux->chave) {
-          aux = aux->dir;
-        }
-        comparacoes++;
-      }
-      if(!aux) {
-        printf("O elemento de chave %d nao foi encontrado!\n", chave);
-      }
-      else {
-        strcpy(resultado, aux->valor);
-      }
+      aux = aux->esq;
     }
-    return comparacoes;
   }
+  return 0;
 }
 
 struct no *removeAtual(struct no *atual) {
-  NO *aux, *subAux;
-  if(atual->dir == NULL) { // se o no nao tem sucessor
-    aux = atual->esq;
+  struct no *no1, *no2;
+  if(atual->esq == NULL) {
+    no2 = atual->dir;
     free(atual);
-    return aux;
+    return no2;
   }
-  aux = atual;
-  subAux = atual->dir; // sub arvore a direita
-  while(subAux->esq != NULL) { // procura pelo sucessor (no mais a esquerda da sub arvore a direita)
-    aux = subAux;
-    subAux = subAux->esq;
+  no1 = atual;
+  no2 = atual->esq;
+  while(no2->dir != NULL) {
+    no1 = no2;
+    no2 = no2->dir;
   }
-  if(aux != atual){ // se encontrei sucessor
-    aux->esq = subAux->dir;
-    subAux->dir = atual->dir;
+  if(no1 != atual) {
+    no1->dir = no2->esq;
+    no2->esq = atual->esq;
   }
-  subAux->esq = atual->esq;
+  no2->dir = atual->dir;
   free(atual);
-  return subAux;
+  return no2;
 }
 
-void removeElemento(MAP *raiz, int chave) {
+int removeElemento(MAP *raiz, int chave) {
   if(raiz == NULL) {
-    perror("O mapa nao existe!\n");
-    return;
+    return 0;
   }
-  else {
-    if(*raiz == NULL){
-      perror("Nao existem elementos a serem removidos!\n");
-      return;
-    }
-    else {
-      NO *atual = *raiz;
-      NO *anterior = NULL;
-      while(atual != NULL) { // procura pelo no a excluir
-        if(atual->chave == chave) { // se entrar aqui achou o no
-          if(atual == *raiz) { // se o no encontrado for a raiz
-            *raiz = removeAtual(atual); // atualiza a raiz
-            return;
-          }
-          else {
-            if(anterior->esq == atual){ // se o no foi encontrado a esquerda do anterior
-              anterior->esq = removeAtual(atual); // atualiza a esquerda do anterior
-              return;
-            }
-            else { // se o no foi encontrado a direita do anterior
-              anterior->dir = removeAtual(atual); // atualiza a direita do anterior
-              return;
-            }
-          }
-        }
-        anterior = atual; // anda na arvore
-        if(chave < atual->chave)
-          atual = atual->esq;
-        else
-          atual = atual->dir;
+  NO *ant = NULL;
+  NO *atual = *raiz;
+  while(atual != NULL) {
+    if (atual->chave == chave) {
+      if (atual == *raiz) {
+        *raiz = removeAtual(atual);
       }
+      else {
+        if (ant->dir == atual)
+          ant->dir = removeAtual(atual);
+        else
+          ant->esq = removeAtual(atual);
+      }
+      return 1;
     }
+    ant = atual;
+    if (atual->chave > chave)
+      atual = atual->esq;
+    else
+      atual = atual->dir;
   }
 }
 
